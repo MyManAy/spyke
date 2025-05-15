@@ -13,6 +13,15 @@ export default function HomePage() {
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
+  
+  useEffect(() => {
+    // simple mobile check
+    const isMobile = /Mobi|Android|iPhone|iPad|iPod/.test(navigator.userAgent);
+    if (isMobile && document.documentElement.requestFullscreen) {
+      document.documentElement.requestFullscreen().catch(console.error);
+    }
+  }, []);
+
   useEffect(() => {
     const getSession = async () => {
       const { data: { session } } = await supabase.auth.getSession();
