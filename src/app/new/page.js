@@ -6,6 +6,7 @@ import { supabase } from '../../lib/supabase';
 
 export default function NewChatPage() {
   const [email, setEmail] = useState('');
+  const [desiredTitle, setDesiredTitle] = useState('');
   const [error, setError] = useState('');
   const router = useRouter();
 
@@ -16,7 +17,8 @@ export default function NewChatPage() {
     // 1) Get current authenticated user
     const { data: { user: currentUser }, error: userError } = await supabase.auth.getUser();
     if (userError || !currentUser) {
-      setError('Unable to get current user');
+      setError('Sign in first');
+      router.push('/login');
       return;
     }
 
@@ -40,7 +42,7 @@ export default function NewChatPage() {
     // 3) Create a new chat room and get its id
     const { data: room, error: roomError } = await supabase
       .from('chat_rooms')
-      .insert({ is_group: false })
+      .insert({ is_group: false, title: desiredTitle })
       .select('id')
       .single();
 
@@ -66,6 +68,10 @@ export default function NewChatPage() {
     router.push(`/chat/${room.id}`);
   };
 
+  const handleTitleChange = (e) => {
+    setDesiredTitle(e.target.value);
+  };
+
   return (
     <div className="flex items-center justify-center h-screen">
       <form onSubmit={handleSubmit} className="p-6 bg-white rounded shadow-md w-full max-w-sm">
@@ -79,6 +85,13 @@ export default function NewChatPage() {
           onChange={(e) => setEmail(e.target.value)}
           className="w-full mb-4 p-2 border rounded"
           required
+        />
+        <input
+          type="text"
+          placeholder="Name the gc"
+          value={desiredTitle}
+          onChange={handleTitleChange}
+          className="w-full mb-4 p-2 border rounded"
         />
         <button type="submit" className="w-full p-2 bg-blue-500 text-white rounded">
           Create Chat
