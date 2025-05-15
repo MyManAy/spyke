@@ -67,7 +67,7 @@ export default function ChatRoom({ roomId }) {
   }, [roomId, refresh]);
 
   const scrollToBottom = () => {
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+    // bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
   const handleSend = async (content) => {

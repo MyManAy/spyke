@@ -3,6 +3,7 @@
 import { useRouter, useParams } from 'next/navigation';
 import ChatRoom from '../../../components/ChatRoom';
 import { useCallback } from 'react';
+import { useEffect } from 'react';
 
 export default function ChatRoomPage() {
     const { id: roomId } = useParams();
@@ -12,6 +13,14 @@ export default function ChatRoomPage() {
         router.push('/');
         return null;
     }
+
+    useEffect(() => {
+        // simple mobile check
+        const isMobile = /Mobi|Android|iPhone|iPad|iPod/.test(navigator.userAgent);
+        if (isMobile && document.documentElement.requestFullscreen) {
+          document.documentElement.requestFullscreen().catch(console.error);
+        }
+      }, []);
 
     const toggleFullScreen = useCallback(() => {
         if (!document.fullscreenElement) {
