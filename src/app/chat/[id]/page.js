@@ -2,6 +2,7 @@
 "use client";
 import { useRouter, useParams } from 'next/navigation';
 import ChatRoom from '../../../components/ChatRoom';
+import { useCallback } from 'react';
 
 export default function ChatRoomPage() {
     const { id: roomId } = useParams();
@@ -12,6 +13,14 @@ export default function ChatRoomPage() {
         return null;
     }
 
+    const toggleFullScreen = useCallback(() => {
+        if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen();
+        } else {
+        document.exitFullscreen();
+        }
+    }, []);
+
     return (
         <div className="flex flex-col h-screen">
         <header className="p-4 bg-gray-100 border-b flex items-center">
@@ -19,6 +28,16 @@ export default function ChatRoomPage() {
             ←
             </button>
             <h2 className="text-xl">Chat</h2>
+
+            <div className="align-items-center ml-auto">
+                <button
+                    onClick={toggleFullScreen}
+                    className="px-2 py-1 text-sm rounded hover:bg-gray-200"
+                    aria-label="Toggle Full Screen"
+                >
+                    ⛶
+                </button>
+            </div>
         </header>
         <div className="flex-1">
             <ChatRoom roomId={roomId} />
