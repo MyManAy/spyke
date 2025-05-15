@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { supabase } from '../lib/supabase';
 import ChatList from '../components/ChatList';
+import { Analytics } from "@vercel/analytics/next"
 
 export default function HomePage() {
   const [session, setSession] = useState(null);
@@ -67,6 +68,7 @@ export default function HomePage() {
   if (!session) {
     return (
       <div className="flex flex-col items-center justify-center h-screen space-y-4">
+        <Analytics />
         <h1 className="text-2xl">Welcome to Spyke Chat</h1>
         <div className="space-x-4">
           <Link href="/login">

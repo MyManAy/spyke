@@ -70,6 +70,7 @@ export default function NewChatPage() {
     <div className="flex items-center justify-center h-screen">
       <form onSubmit={handleSubmit} className="p-6 bg-white rounded shadow-md w-full max-w-sm">
         <h1 className="text-2xl mb-4">Start New Chat</h1>
+        <p className="mb-2 text-gray-600">Enter the email of the user you want to chat with:</p>
         {error && <p className="text-red-500 mb-2">{error}</p>}
         <input
           type="email"
