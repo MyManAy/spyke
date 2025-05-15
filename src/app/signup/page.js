@@ -33,7 +33,8 @@ export default function SignupPage() {
       console.error('Error saving profile:', profileError);
     }
 
-    router.push('/login');
+    alert('close ts tab and check ur email for confirmation link gng');
+
   };
 
   return (
