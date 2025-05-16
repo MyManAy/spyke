@@ -14,6 +14,30 @@ export default function ChatRoomPage() {
 
     // Get current chat name from roomId
     useEffect(() => {
+        // if user is not a member of the room, redirect to home
+        const checkMembership = async () => {
+            // Get current user
+            const {
+                data: { user },
+                error: userError,
+            } = await supabase.auth.getUser();
+            if (userError || !user) {
+                router.replace('/login');
+                return;
+            }
+
+            // Verify membership
+            const { data, error } = await supabase
+                .from('chat_members')
+                .select('room_id')
+                .eq('member_id', user.id)
+                .eq('room_id', roomId)
+                .single();
+            if (error || !data) {
+                router.replace('/');
+            }
+        };
+        checkMembership();
         const fetchChatName = async () => {
             const { data: { title, is_group } } = await supabase
                 .from('chat_rooms')
