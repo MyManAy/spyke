@@ -18,7 +18,10 @@ export default function ChatRoom({ roomId }) {
       setCurrentUserId(user?.id || null);
       
     });
-  }, []);
+    if (!dontGoDown) {
+          scrollToBottom();
+        }
+  }, [messages]);
 
   useEffect(() => {
     if (!roomId) return;
@@ -92,9 +95,9 @@ export default function ChatRoom({ roomId }) {
 
   const handleSend = async ({ content, image_url }) => {
     if (!currentUserId) return;
+    setDontGoDown(false);
     await supabase.from('messages').insert({ room_id: roomId, sender_id: currentUserId, content, image_url });
     setRefresh(prev => prev + 1);
-    scrollToBottom();
   };
 
     // constantly add 1 to refresh every second
@@ -141,7 +144,7 @@ export default function ChatRoom({ roomId }) {
       {dontGoDown && (
         <button
           onClick={() => {
-            bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+            scrollToBottom();
             setDontGoDown(false);
           }}
           className="fixed bottom-24 right-6 bg-blue-500 text-white px-4 py-2 rounded shadow"
