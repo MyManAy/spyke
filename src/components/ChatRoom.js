@@ -8,20 +8,14 @@ export default function ChatRoom({ roomId }) {
   const [messages, setMessages] = useState([]);
   const [refresh, setRefresh] = useState(0);
   const [currentUserId, setCurrentUserId] = useState(null);
-  const [check, setDidCheck] = useState(true);
+  let didCheck = true;
   const bottomRef = useRef(null);
-
-  useEffect(() => {
-    if (check) {
-        setDidCheck(false);
-        scrollToBottom();
-    }
-  }, [messages]);
 
   // Get current user ID once
   useEffect(() => {
     supabase.auth.getUser().then(({ data: { user } }) => {
       setCurrentUserId(user?.id || null);
+      
     });
   }, []);
 
@@ -30,7 +24,11 @@ export default function ChatRoom({ roomId }) {
 
     // Helper to process and scroll
     const processMessages = (data) => {
-      setMessages(data);
+        setMessages(data);
+        if (didCheck) {
+            didCheck = false;
+            scrollToBottom();
+        }
     };
 
     // Fetch existing messages with sender profile
@@ -66,6 +64,7 @@ export default function ChatRoom({ roomId }) {
           sender_name: profileData?.display_name || 'Unknown'
         };
         setMessages(prev => [...prev, msgWithName]);
+        
       })
       .subscribe();
 
