@@ -94,6 +94,7 @@ export default function ChatRoom({ roomId }) {
     if (!currentUserId) return;
     await supabase.from('messages').insert({ room_id: roomId, sender_id: currentUserId, content, image_url });
     setRefresh(prev => prev + 1);
+    scrollToBottom();
   };
 
     // constantly add 1 to refresh every second
