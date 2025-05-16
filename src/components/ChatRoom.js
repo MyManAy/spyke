@@ -8,7 +8,7 @@ export default function ChatRoom({ roomId }) {
   const [messages, setMessages] = useState([]);
   const [refresh, setRefresh] = useState(0);
   const [currentUserId, setCurrentUserId] = useState(null);
-  let didCheck = true;
+  const [didCheck, setdidCheck] = useState(true);
   const bottomRef = useRef(null);
 
   // Get current user ID once
@@ -26,7 +26,7 @@ export default function ChatRoom({ roomId }) {
     const processMessages = (data) => {
         setMessages(data);
         if (didCheck) {
-            didCheck = false;
+            setdidCheck(false);
             scrollToBottom();
         }
     };
