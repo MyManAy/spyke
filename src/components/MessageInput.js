@@ -110,8 +110,10 @@ export default function MessageInput({ onSend }) {
         hover:bg-gray-300
         "
     >
-        📎
-        <span className="hidden sm:inline ml-1">Attach</span>
+        
+        {file && ("💦")}
+        {!file && ("👅")}
+        <span className="hidden sm:inline ml-1">{file ? "Attached" : "Attach"}</span>
     </label>
 
     {/* text input */}
