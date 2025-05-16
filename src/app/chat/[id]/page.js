@@ -3,11 +3,33 @@
 import { useRouter, useParams } from 'next/navigation';
 import ChatRoom from '../../../components/ChatRoom';
 import { useCallback } from 'react';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { supabase } from '../../../lib/supabase';
 
 export default function ChatRoomPage() {
     const { id: roomId } = useParams();
     const router = useRouter();
+    const [chatName, setChatName] = useState('');
+    const [isGroup, setIsGroup] = useState(false);
+
+    // Get current chat name from roomId
+    useEffect(() => {
+        const fetchChatName = async () => {
+            const { data: { title, is_group } } = await supabase
+                .from('chat_rooms')
+                .select('title, is_group')
+                .eq('id', roomId)
+                .single();
+            setChatName(title);
+            setIsGroup(is_group);
+
+            if (!title) {
+                if (is_group) setChatName('Group Chat');
+                setChatName('Chat');
+            }
+        };
+        fetchChatName();
+    }, [roomId]);
 
     if (!roomId) {
         router.push('/');
@@ -36,7 +58,7 @@ export default function ChatRoomPage() {
             <button onClick={() => router.push('/')} className="text-blue-500 mr-4">
             ←
             </button>
-            <h2 className="text-xl">Chat</h2>
+            <h2 className="text-xl">{chatName}</h2>
 
             <div className="align-items-center ml-auto">
                 <button
