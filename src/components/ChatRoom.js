@@ -24,6 +24,23 @@ export default function ChatRoom({ roomId }) {
   }, [messages]);
 
   useEffect(() => {
+    // on mobile browsers, visualViewport.height shrinks when the keyboard opens
+    const onResize = () => {
+      if (bottomRef.current) {
+        bottomRef.current.scrollIntoView({ behavior: 'smooth' });
+      }
+    };
+
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', onResize);
+      return () => {
+        window.visualViewport.removeEventListener('resize', onResize);
+      };
+    }
+  }, []);
+
+
+  useEffect(() => {
     if (!roomId) return;
 
     // Helper to process and scroll
