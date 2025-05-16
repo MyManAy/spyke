@@ -53,7 +53,7 @@ export default function ChatRoomPage() {
     }, []);
 
     return (
-        <div className="flex flex-col h-screen overflow-hidden">
+        <div className="flex flex-col h-screen overflow-hidden fullscreen-chat">
         <header className="flex items-center flex-none p-4 bg-gray-100 border-b">
             {/* p-4 bg-gray-100 border-b  */}
             <button onClick={() => router.push('/')} className="text-blue-500 mr-4">
