@@ -8,9 +8,9 @@ export default function ChatRoom({ roomId }) {
   const [messages, setMessages] = useState([]);
   const [refresh, setRefresh] = useState(0);
   const [currentUserId, setCurrentUserId] = useState(null);
-  const [didCheck, setdidCheck] = useState(false);
-  let altCheck = false;
+  const [dontGoDown, setDontGoDown] = useState(false);
   const bottomRef = useRef(null);
+  const containerRef = useRef(null);
 
   // Get current user ID once
   useEffect(() => {
@@ -21,26 +21,13 @@ export default function ChatRoom({ roomId }) {
   }, []);
 
   useEffect(() => {
-    setdidCheck(false);
-  }, [roomId]);
-
-  useEffect(() => {
     if (!roomId) return;
 
     // Helper to process and scroll
     const processMessages = (data) => {
         setMessages(data);
-        if (!didCheck) {
-            setdidCheck(true);
-            scrollToBottom();
-        }
-        if (altCheck != didCheck) {
-            scrollToBottom();
-            altCheck = true;
-            setdidCheck(true);
-        } else {
-            altCheck = false;
-            setdidCheck(false);
+        if (!dontGoDown) {
+          scrollToBottom();
         }
     };
 
@@ -88,6 +75,21 @@ export default function ChatRoom({ roomId }) {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
+  const handleScroll = () => {
+    const el = containerRef.current;
+    if (!el) return;
+
+    const { scrollTop, scrollHeight, clientHeight } = el;
+    // distance from bottom:
+    const distanceFromBottom = scrollHeight - clientHeight - scrollTop;
+    // if user has scrolled up by more than 1/4 of the visible height:
+    if (distanceFromBottom > clientHeight * 0.25) {
+      setDontGoDown(true);
+    } else {
+      setDontGoDown(false);
+    }
+  };
+
   const handleSend = async ({ content, image_url }) => {
     if (!currentUserId) return;
     await supabase.from('messages').insert({ room_id: roomId, sender_id: currentUserId, content, image_url });
@@ -104,7 +106,10 @@ export default function ChatRoom({ roomId }) {
 
   return (
     <div className="flex flex-col h-full">
-        <main className="flex-1 overflow-y-auto p-4">
+        <main
+          className="flex-1 overflow-y-auto p-4"
+          ref={containerRef}
+          onScroll={handleScroll} >
             {messages.map(msg => {
             const isOwn = msg.sender_id === currentUserId;
             return (
@@ -130,6 +135,19 @@ export default function ChatRoom({ roomId }) {
             <div ref={bottomRef} />
         </main>
         <MessageInput onSend={handleSend} />
+
+        
+      {dontGoDown && (
+        <button
+          onClick={() => {
+            bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+            setDontGoDown(false);
+          }}
+          className="fixed bottom-24 right-6 bg-blue-500 text-white px-4 py-2 rounded shadow"
+        >
+          Jump to newest
+        </button>
+      )}
     </div>
   );
 }
