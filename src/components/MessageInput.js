@@ -64,7 +64,13 @@ export default function MessageInput({ onSend }) {
     }
 
     // now dispatch both text + image_url
-    await onSend({ content: text.trim() || null, image_url: imageUrl });
+    if (!text && file) {
+        e.target.querySelector('input[type="text"]').value = "📸 Image";
+        setText("📸 Image");
+    }
+    let newC = text.trim() || "📸 Image";
+    alert("Sending message: " + newC);
+    await onSend({ content: newC, image_url: imageUrl });
 
     // only now clear!
     setText('');

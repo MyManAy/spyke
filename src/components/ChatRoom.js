@@ -92,7 +92,6 @@ export default function ChatRoom({ roomId }) {
           return (
             <div key={msg.id} className={`flex mb-2 ${isOwn ? 'justify-end' : 'justify-start'}`}>
                 <div className={`flex flex-col ${isOwn ? 'items-end' : 'items-start'}`}>
-                    {/* if previous message has matching sender, don't show sender name */}
                     {msg.sender_name && msg.sender_name !== messages[messages.indexOf(msg) - 1]?.sender_name && <span className="text-sm text-gray-500">{msg.sender_name}</span>}
                     
                     <div className={`${isOwn ? 'bg-blue-100' : 'bg-gray-100 '} p-2 rounded-lg max-w-xs`}>  
