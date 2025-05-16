@@ -8,7 +8,15 @@ export default function ChatRoom({ roomId }) {
   const [messages, setMessages] = useState([]);
   const [refresh, setRefresh] = useState(0);
   const [currentUserId, setCurrentUserId] = useState(null);
+  const [check, setDidCheck] = useState(true);
   const bottomRef = useRef(null);
+
+  useEffect(() => {
+    if (check) {
+        setDidCheck(false);
+        scrollToBottom();
+    }
+  }, [messages]);
 
   // Get current user ID once
   useEffect(() => {
@@ -23,7 +31,6 @@ export default function ChatRoom({ roomId }) {
     // Helper to process and scroll
     const processMessages = (data) => {
       setMessages(data);
-      scrollToBottom();
     };
 
     // Fetch existing messages with sender profile
@@ -59,7 +66,6 @@ export default function ChatRoom({ roomId }) {
           sender_name: profileData?.display_name || 'Unknown'
         };
         setMessages(prev => [...prev, msgWithName]);
-        scrollToBottom();
       })
       .subscribe();
 
@@ -67,7 +73,7 @@ export default function ChatRoom({ roomId }) {
   }, [roomId, refresh]);
 
   const scrollToBottom = () => {
-    // bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
   const handleSend = async ({ content, image_url }) => {
@@ -85,33 +91,33 @@ export default function ChatRoom({ roomId }) {
     }, []);
 
   return (
-    <div className="flex flex-col h-screen">
-      <main className="flex-1 overflow-y-auto p-4">
-        {messages.map(msg => {
-          const isOwn = msg.sender_id === currentUserId;
-          return (
-            <div key={msg.id} className={`flex mb-2 ${isOwn ? 'justify-end' : 'justify-start'}`}>
-                <div className={`flex flex-col ${isOwn ? 'items-end' : 'items-start'}`}>
-                    {msg.sender_name && msg.sender_name !== messages[messages.indexOf(msg) - 1]?.sender_name && <span className="text-sm text-gray-500">{msg.sender_name}</span>}
-                    
-                    <div className={`${isOwn ? 'bg-blue-100' : 'bg-gray-100 '} p-2 rounded-lg max-w-xs`}>  
-                        {msg.image_url && (
-                            <img
-                                src={msg.image_url}
-                                alt="attachment"
-                                className="mb-2 rounded max-h-60 object-contain"
-                            />
-                            )}
-                        <p className="text-sm break-words">{msg.content}</p>
-                        <span className="text-xs block mt-1 text-right text-gray-500">{new Date(msg.sent_at).toLocaleTimeString()}</span>
+    <div className="flex flex-col h-full">
+        <main className="flex-1 overflow-y-auto p-4">
+            {messages.map(msg => {
+            const isOwn = msg.sender_id === currentUserId;
+            return (
+                <div key={msg.id} className={`flex mb-2 ${isOwn ? 'justify-end' : 'justify-start'}`}>
+                    <div className={`flex flex-col ${isOwn ? 'items-end' : 'items-start'}`}>
+                        {msg.sender_name && msg.sender_name !== messages[messages.indexOf(msg) - 1]?.sender_name && <span className="text-sm text-gray-500">{msg.sender_name}</span>}
+                        
+                        <div className={`${isOwn ? 'bg-blue-100' : 'bg-gray-100 '} p-2 rounded-lg max-w-xs`}>  
+                            {msg.image_url && (
+                                <img
+                                    src={msg.image_url}
+                                    alt="attachment"
+                                    className="mb-2 rounded max-h-60 object-contain"
+                                />
+                                )}
+                            <p className="text-sm break-words">{msg.content}</p>
+                            <span className="text-xs block mt-1 text-right text-gray-500">{new Date(msg.sent_at).toLocaleTimeString()}</span>
+                        </div>
                     </div>
                 </div>
-            </div>
-          );
-        })}
-        <div ref={bottomRef} />
-      </main>
-      <MessageInput onSend={handleSend} />
+            );
+            })}
+            <div ref={bottomRef} />
+        </main>
+        <MessageInput onSend={handleSend} />
     </div>
   );
 }

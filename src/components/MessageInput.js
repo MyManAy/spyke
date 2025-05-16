@@ -81,27 +81,71 @@ export default function MessageInput({ onSend }) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="border-t p-4 flex items-center">
-      <input
+    // inside your ChatRoom container, replace the <form> with:
+
+    <form
+    onSubmit={handleSubmit}
+    className="
+        border-t           /* thin line above the form */
+        bg-white           /* opaque background */
+        p-2 sm:p-4         /* smaller padding on mobile */
+        flex items-center
+        flex-shrink-0      /* don't let it grow/shrink weirdly */
+        z-10               /* sit above the scrolling messages */
+    "
+    >
+    {/* hidden file input + styled label */}
+    <input
+        id="file-upload"
         type="file"
         accept="image/*"
         onChange={handleFileChange}
-        className="mr-2"
-      />
-      <input
+        className="hidden"
+    />
+    <label
+        htmlFor="file-upload"
+        className="
+        flex items-center justify-center
+        px-2 py-1 sm:px-4 sm:py-2
+        bg-gray-200 rounded mr-2
+        hover:bg-gray-300
+        "
+    >
+        📎
+        <span className="hidden sm:inline ml-1">Attach</span>
+    </label>
+
+    {/* text input */}
+    <input
         type="text"
-        placeholder="Type a message..."
+        placeholder="Type a message…"
         value={text}
         onChange={e => setText(e.target.value)}
-        className="flex-1 border rounded px-3 py-2 mr-2"
-      />
-      <button
+        className="
+        flex-1 
+        border rounded
+        px-2 py-1 sm:px-3 sm:py-2
+        mr-2 text-sm sm:text-base
+        "
+    />
+
+    {/* send button */}
+    <button
         type="submit"
         disabled={uploading && !text && !file}
-        className="px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50"
-      >
+        className="
+        px-3 py-1 sm:px-4 sm:py-2
+        bg-blue-500 text-white rounded
+        text-sm sm:text-base
+        disabled:opacity-50
+        "
+    >
         {uploading ? "Sending…" : "Send"}
-      </button>
+    </button>
     </form>
+
+
+
+
   );
 }

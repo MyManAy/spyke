@@ -53,8 +53,9 @@ export default function ChatRoomPage() {
     }, []);
 
     return (
-        <div className="flex flex-col h-screen">
-        <header className="p-4 bg-gray-100 border-b flex items-center">
+        <div className="flex flex-col h-screen overflow-hidden">
+        <header className="flex items-center flex-none p-4 bg-gray-100 border-b">
+            {/* p-4 bg-gray-100 border-b  */}
             <button onClick={() => router.push('/')} className="text-blue-500 mr-4">
             ←
             </button>
@@ -70,7 +71,7 @@ export default function ChatRoomPage() {
                 </button>
             </div>
         </header>
-        <div className="flex-1">
+        <div className="flex-1 overflow-y-auto">
             <ChatRoom roomId={roomId} />
         </div>
         </div>
