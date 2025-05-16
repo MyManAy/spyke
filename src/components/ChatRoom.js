@@ -8,7 +8,8 @@ export default function ChatRoom({ roomId }) {
   const [messages, setMessages] = useState([]);
   const [refresh, setRefresh] = useState(0);
   const [currentUserId, setCurrentUserId] = useState(null);
-  const [didCheck, setdidCheck] = useState(true);
+  const [didCheck, setdidCheck] = useState(false);
+  let altCheck = false;
   const bottomRef = useRef(null);
 
   // Get current user ID once
@@ -20,14 +21,26 @@ export default function ChatRoom({ roomId }) {
   }, []);
 
   useEffect(() => {
+    setdidCheck(false);
+  }, [roomId]);
+
+  useEffect(() => {
     if (!roomId) return;
 
     // Helper to process and scroll
     const processMessages = (data) => {
         setMessages(data);
-        if (didCheck) {
-            setdidCheck(false);
+        if (!didCheck) {
+            setdidCheck(true);
             scrollToBottom();
+        }
+        if (altCheck != didCheck) {
+            scrollToBottom();
+            altCheck = true;
+            setdidCheck(true);
+        } else {
+            altCheck = false;
+            setdidCheck(false);
         }
     };
 
@@ -69,7 +82,7 @@ export default function ChatRoom({ roomId }) {
       .subscribe();
 
     return () => supabase.removeChannel(channel);
-  }, [roomId, refresh]);
+  }, [roomId]);
 
   const scrollToBottom = () => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });

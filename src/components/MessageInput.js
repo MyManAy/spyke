@@ -69,7 +69,6 @@ export default function MessageInput({ onSend }) {
         setText("📸 Image");
     }
     let newC = text.trim() || "📸 Image";
-    alert("Sending message: " + newC);
     await onSend({ content: newC, image_url: imageUrl });
 
     // only now clear!
