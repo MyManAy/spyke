@@ -46,7 +46,7 @@ export default function ChatRoom({ roomId }) {
     if (!dontGoDown) {
           scrollToBottom();
         }
-  }, [messages]);
+  }, []);
 
   useEffect(() => {
     // on mobile browsers, visualViewport.height shrinks when the keyboard opens
