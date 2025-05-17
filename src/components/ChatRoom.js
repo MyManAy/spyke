@@ -40,7 +40,6 @@ export default function ChatRoom({ roomId }) {
   useEffect(() => {
     supabase.auth.getUser().then(({ data: { user } }) => {
       setCurrentUserId(user?.id || null);
-      
     });
     if (!dontGoDown) {
           scrollToBottom();
