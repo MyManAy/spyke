@@ -8,21 +8,35 @@ export default function ChatRoom({ roomId }) {
   const [messages, setMessages] = useState([]);
   const [currentUserId, setCurrentUserId] = useState(null);
   const [dontGoDown, setDontGoDown] = useState(false);
+  const [notifPermission, setNotifPermission] = useState(() => {
+    if (typeof window !== 'undefined' && 'Notification' in window) {
+      return Notification.permission;
+    }
+    return 'default';
+  });
   const bottomRef = useRef(null);
   const containerRef = useRef(null);
 
   // Ask for notification permission on mount
   useEffect(() => {
     if (typeof window !== 'undefined' && 'Notification' in window) {
-      if (Notification.permission === 'default') {
-        Notification.requestPermission().catch(() => {});
-      }
+      setNotifPermission(Notification.permission);
     }
   }, []);
 
+  const requestNotificationPermission = async () => {
+    if (typeof window === 'undefined' || !('Notification' in window)) return;
+    try {
+      const result = await Notification.requestPermission();
+      setNotifPermission(result);
+    } catch {
+      // ignore
+    }
+  };
+
   const showNotification = ({ sender_name, content, image_url }) => {
     if (typeof window === 'undefined' || !('Notification' in window)) return;
-    if (Notification.permission !== 'granted') return;
+    if (notifPermission !== 'granted') return;
     const MAX_LEN = 60;
     let text = '';
     const truncated = (t) => (t.length > MAX_LEN ? t.slice(0, MAX_LEN) + '…' : t);
@@ -174,7 +188,7 @@ export default function ChatRoom({ roomId }) {
         </main>
         <MessageInput onSend={handleSend} />
 
-        
+
       {dontGoDown && (
         <button
           onClick={() => {
@@ -184,6 +198,14 @@ export default function ChatRoom({ roomId }) {
           className="fixed bottom-24 right-6 bg-blue-500 text-white px-4 py-2 rounded shadow"
         >
           Jump to newest
+        </button>
+      )}
+      {notifPermission !== 'granted' && (
+        <button
+          onClick={requestNotificationPermission}
+          className="fixed bottom-24 left-6 bg-green-500 text-white px-4 py-2 rounded shadow"
+        >
+          Enable Notifications
         </button>
       )}
     </div>
