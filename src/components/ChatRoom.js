@@ -12,6 +12,31 @@ export default function ChatRoom({ roomId }) {
   const bottomRef = useRef(null);
   const containerRef = useRef(null);
 
+  // Ask for notification permission on mount
+  useEffect(() => {
+    if (typeof window !== 'undefined' && 'Notification' in window) {
+      if (Notification.permission === 'default') {
+        Notification.requestPermission().catch(() => {});
+      }
+    }
+  }, []);
+
+  const showNotification = ({ sender_name, content, image_url }) => {
+    if (typeof window === 'undefined' || !('Notification' in window)) return;
+    if (Notification.permission !== 'granted') return;
+    const MAX_LEN = 60;
+    let text = '';
+    const truncated = (t) => (t.length > MAX_LEN ? t.slice(0, MAX_LEN) + '…' : t);
+    if (image_url && (!content || content === '📸 Image')) {
+      text = 'Image.';
+    } else if (image_url) {
+      text = truncated(content);
+    } else {
+      text = truncated(content);
+    }
+    new Notification(`New message from ${sender_name}`, { body: text });
+  };
+
   // Get current user ID once
   useEffect(() => {
     supabase.auth.getUser().then(({ data: { user } }) => {
@@ -84,12 +109,15 @@ export default function ChatRoom({ roomId }) {
           sender_name: profileData?.display_name || 'Unknown'
         };
         setMessages(prev => [...prev, msgWithName]);
-        
+        if (newMessage.sender_id !== currentUserId) {
+          showNotification(msgWithName);
+        }
+
       })
       .subscribe();
 
     return () => supabase.removeChannel(channel);
-  }, [roomId]);
+  }, [roomId, currentUserId]);
 
   const scrollToBottom = () => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
