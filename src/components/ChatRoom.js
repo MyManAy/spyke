@@ -42,8 +42,8 @@ export default function ChatRoom({ roomId }) {
       setCurrentUserId(user?.id || null);
     });
     if (!dontGoDown) {
-      scrollToBottom();
-    }
+          scrollToBottom();
+        }
   }, []);
 
   useEffect(() => {
@@ -141,7 +141,6 @@ export default function ChatRoom({ roomId }) {
     setDontGoDown(false);
     await supabase.from('messages').insert({ room_id: roomId, sender_id: currentUserId, content, image_url });
   };
-
 
   return (
     <div className="flex flex-col h-full">
