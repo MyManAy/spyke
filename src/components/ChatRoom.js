@@ -6,7 +6,6 @@ import MessageInput from './MessageInput';
 
 export default function ChatRoom({ roomId }) {
   const [messages, setMessages] = useState([]);
-  const [refresh, setRefresh] = useState(0);
   const [currentUserId, setCurrentUserId] = useState(null);
   const [dontGoDown, setDontGoDown] = useState(false);
   const bottomRef = useRef(null);
@@ -142,16 +141,7 @@ export default function ChatRoom({ roomId }) {
     if (!currentUserId) return;
     setDontGoDown(false);
     await supabase.from('messages').insert({ room_id: roomId, sender_id: currentUserId, content, image_url });
-    setRefresh(prev => prev + 1);
   };
-
-    // constantly add 1 to refresh every second
-    useEffect(() => {
-        const interval = setInterval(() => {
-        setRefresh(prev => prev + 1);
-        }, 1000);
-        return () => clearInterval(interval);
-    }, []);
 
   return (
     <div className="flex flex-col h-full">
