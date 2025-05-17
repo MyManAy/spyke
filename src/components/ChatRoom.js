@@ -129,7 +129,7 @@ export default function ChatRoom({ roomId }) {
       .subscribe();
 
     return () => supabase.removeChannel(channel);
-  }, [roomId, currentUserId]);
+  }, [roomId, currentUserId, notifPermission]);
 
   const scrollToBottom = () => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
